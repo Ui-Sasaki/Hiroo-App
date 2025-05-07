@@ -16,13 +16,29 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jQV-kb-1ra">
+                                <rect key="frame" x="212" y="573" width="165" height="105"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="map">
+                                    <fontDescription key="titleFontDescription" type="system" pointSize="37"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="toNEXT" destination="BYZ-38-t0r" eventType="touchUpInside" id="IuU-jz-LaE"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <connections>
+                        <segue destination="K6J-vs-y4Q" kind="presentation" identifier="toNEXT" id="OqH-nY-6Q0"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="21" y="4"/>
+            <point key="canvasLocation" x="75.572519083969468" y="60.563380281690144"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="rLa-9s-GcX">
@@ -44,36 +60,46 @@
             <objects>
                 <viewController id="K6J-vs-y4Q" customClass="koishikawamap" customModule="Hiroo_App" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hMq-9A-8fN">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wzg-To-K4T">
-                                <rect key="frame" x="0.0" y="72" width="393" height="455"/>
+                                <rect key="frame" x="0.0" y="72" width="393" height="419"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <standardMapConfiguration key="preferredConfiguration"/>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="アクセス" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b9h-Ob-PEw">
-                                <rect key="frame" x="50" y="587" width="64" height="21"/>
+                                <rect key="frame" x="48" y="509" width="64" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="都営三田線「千石駅」A1出口より徒歩2分" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W4K-dr-0Jo">
-                                <rect key="frame" x="50" y="630" width="303" height="54"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W4K-dr-0Jo">
+                                <rect key="frame" x="16" y="515" width="361" height="118"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <string key="text">【地下鉄】
+都営三田線「千石駅」A1出口より徒歩2分
+東京メトロ南北線「駒込駅」出口2より徒歩12分
+【JR】
+山手線「巣鴨駅」「駒込駅」より徒歩13分</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qjB-wW-zve">
-                                <rect key="frame" x="50" y="678" width="303" height="57"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" lineBreakMode="tailTruncation" numberOfLines="11" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CR4-jL-d13">
+                                <rect key="frame" x="16" y="603" width="361" height="182"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <string key="text">東京メトロ南北線「駒込駅」出口2より徒歩12分
+                                <string key="text">【コミュニティバス】
+駒込駅から文京区コミュニティバス「千石駅」まで約5分、バス停より徒歩3分
+千駄木駅から文京区コミュニティバス「昭和小学校（上富士前）」まで約6分、バス停より徒歩5分
+【都営バス】
+江戸川橋駅から都営バス（上58・上野松坂屋前行）「文京グリーンコート前」まで約15分、バス停より徒歩2分
+御茶ノ水駅から都営バス（茶51・駒込駅南口行）「上富士前」まで約15分、バス停より徒歩5分
 
 
 </string>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -81,6 +107,9 @@
                         <viewLayoutGuide key="safeArea" id="GPz-ni-xt9"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <connections>
+                        <outlet property="mapView" destination="wzg-To-K4T" id="mDy-Mp-t4D"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dsa-l0-XjH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

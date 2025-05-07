@@ -9,36 +9,37 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class koishikawamap: UIViewController, CLLocationManagerDelegate {
-
-    var locationManager: CLLocationManager!
-
+class koishikawamap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+  @IBOutlet weak var mapView: MKMapView!
+  var locationManager: CLLocationManager!
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapView.delegate = self
 
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
-    }
 
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        let status = manager.authorizationStatus
-        switch status {
-        case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-        case .restricted, .denied:
-            print("位置情報の使用が制限または拒否されています")
-        case .authorizedAlways, .authorizedWhenInUse:
-            manager.startUpdatingLocation()
-        @unknown default:
-            break
+        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        let hgk = CLLocationCoordinate2DMake(35.728851235181615, 139.7468261848643)
+        let region = MKCoordinateRegion(center: hgk, span: span)
+        mapView.setRegion(region, animated: true)
+
+        let pin = MKPointAnnotation()
+        pin.title = "タイトル"
+        pin.subtitle = "サブタイトル"
+        pin.coordinate = hgk
+        mapView.addAnnotation(pin)
+    }
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+                let url = userActivity.webpageURL else {
+            return true
         }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        print("現在地：\(location.coordinate.latitude), \(location.coordinate.longitude)")
-        // ここで地図にピンを立てたり、表示位置を更新したりできます
+        // 任意の画面に遷移させるなどの処理を書く
+        return true
     }
 }
+
+
