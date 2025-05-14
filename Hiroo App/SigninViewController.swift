@@ -1,8 +1,18 @@
 import UIKit
 import GoogleSignIn
+import FirebaseAuth
+import FirebaseStorage
 
-class SigninViewController: UIViewController { 
-
+class SigninViewController: UIViewController {
+    
+    override func viewWillAppear(_ animated :Bool) {
+        super.viewWillAppear(animated)
+        print ("aaa")
+        view.backgroundColor = .black
+        setupUI()
+        setupActions()
+    }
+    
     // MARK: - UI Components
     private let stackView: UIStackView = {
         let stack = UIStackView()
@@ -13,7 +23,7 @@ class SigninViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
-
+    
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle.fill")
@@ -22,7 +32,7 @@ class SigninViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-
+    
     private let emailField: UITextField = {
         let field = UITextField()
         field.placeholder = "Email"
@@ -33,7 +43,7 @@ class SigninViewController: UIViewController {
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
-
+    
     private let passwordField: UITextField = {
         let field = UITextField()
         field.placeholder = "Password"
@@ -42,7 +52,7 @@ class SigninViewController: UIViewController {
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
-
+    
     private let forgotPasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Forgot Password?", for: .normal)
@@ -51,7 +61,7 @@ class SigninViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     private let signInButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Sign In", for: .normal)
@@ -62,13 +72,13 @@ class SigninViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     private let separatorView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-
+    
     private let orLabel: UILabel = {
         let label = UILabel()
         label.text = "OR"
@@ -78,10 +88,10 @@ class SigninViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     private let gmailButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("  Sign in with Google", for: .normal)
+        button.setTitle("Sign in with Google", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .white
         button.setTitleColor(.black, for: .normal)
@@ -98,21 +108,34 @@ class SigninViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
-    // MARK: - Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        setupUI()
-        setupActions()
-    }
-
+    
+    private let signUpButton: UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString(
+            string: "Don't have an account? ",
+            attributes: [.foregroundColor: UIColor.systemGray]
+        )
+        attributedTitle.append(NSAttributedString(
+            string: "Sign Up",
+            attributes: [.foregroundColor: UIColor.systemBlue, .font: UIFont.boldSystemFont(ofSize: 16)]
+        ))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        button.titleLabel?.textAlignment = .center
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     // MARK: - Setup
     private func setupUI() {
-        view.addSubview(stackView)
-
+        print("aaa")
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        
+        scrollView.addSubview(stackView)
+        
         let separatorStackView = createSeparatorWithLabel()
-
+        
         stackView.addArrangedSubview(logoImageView)
         stackView.addArrangedSubview(emailField)
         stackView.addArrangedSubview(passwordField)
@@ -120,21 +143,30 @@ class SigninViewController: UIViewController {
         stackView.addArrangedSubview(signInButton)
         stackView.addArrangedSubview(separatorStackView)
         stackView.addArrangedSubview(gmailButton)
-
+        stackView.addArrangedSubview(signUpButton)
+        
         stackView.setCustomSpacing(40, after: logoImageView)
         stackView.setCustomSpacing(30, after: separatorStackView)
-
+        stackView.setCustomSpacing(20, after: gmailButton)
+        
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 40),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -40),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -80),
             
             logoImageView.heightAnchor.constraint(equalToConstant: 100),
             signInButton.heightAnchor.constraint(equalToConstant: 50),
             gmailButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
-
+    
     private func createSeparatorWithLabel() -> UIView {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -170,13 +202,14 @@ class SigninViewController: UIViewController {
         
         return containerView
     }
-
+    
     private func setupActions() {
         signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
         gmailButton.addTarget(self, action: #selector(gmailSignInTapped), for: .touchUpInside)
         forgotPasswordButton.addTarget(self, action: #selector(forgotPasswordTapped), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
     }
-
+    
     // MARK: - Actions
     @objc private func signInTapped() {
         guard let email = emailField.text, !email.isEmpty,
@@ -189,12 +222,17 @@ class SigninViewController: UIViewController {
         
         print("Sign in with email: \(email)")
     }
-
+    
     @objc private func gmailSignInTapped() {
         print("Google Sign-In tapped")
     }
-
+    
     @objc private func forgotPasswordTapped() {
         print("Forgot password tapped")
+    }
+    
+    @objc private func signUpTapped() {
+        let signUpVC = SignUpViewController()
+        navigationController?.pushViewController(signUpVC, animated: true)
     }
 }

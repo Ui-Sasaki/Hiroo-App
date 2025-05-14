@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDyY86WSQC_FiXbv0jC92sF_X1xIlZD3xQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1092237448644</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>app.sasaki.ui.Hiroo-App</string>
+	<key>PROJECT_ID</key>
+	<string>hirooapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hirooapp.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1092237448644:ios:8e1404a9451c989d00c091</string>
+</dict>
+</plist>
