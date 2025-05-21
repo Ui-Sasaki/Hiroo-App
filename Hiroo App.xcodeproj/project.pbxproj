@@ -10,6 +10,7 @@
 		2E3F84412DD43B10002C1EE1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2E3F84402DD43B10002C1EE1 /* FirebaseAuth */; };
 		2E3F84442DD43C8F002C1EE1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2E3F84432DD43C8F002C1EE1 /* GoogleSignIn */; };
 		2E3F84462DD4952B002C1EE1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2E3F84452DD4952B002C1EE1 /* FirebaseStorage */; };
+		5556FEC32DDDE51A004E76FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5556FEC22DDDE51A004E76FF /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E3F84412DD43B10002C1EE1 /* FirebaseAuth in Frameworks */,
+				5556FEC32DDDE51A004E76FF /* FirebaseFirestore in Frameworks */,
 				2E3F84442DD43C8F002C1EE1 /* GoogleSignIn in Frameworks */,
 				2E3F84462DD4952B002C1EE1 /* FirebaseStorage in Frameworks */,
 			);
@@ -137,6 +139,7 @@
 				2E3F84402DD43B10002C1EE1 /* FirebaseAuth */,
 				2E3F84432DD43C8F002C1EE1 /* GoogleSignIn */,
 				2E3F84452DD4952B002C1EE1 /* FirebaseStorage */,
+				5556FEC22DDDE51A004E76FF /* FirebaseFirestore */,
 			);
 			productName = "Hiroo App";
 			productReference = 2EA831EF2D65F58300CAA38E /* Hiroo App.app */;
@@ -616,6 +619,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2E3F843F2DD43B10002C1EE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		5556FEC22DDDE51A004E76FF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E3F843F2DD43B10002C1EE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
