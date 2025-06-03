@@ -120,8 +120,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="68o-eV-491">
-                                <rect key="frame" x="16" y="755" width="361" height="67"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="9" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i0X-DU-Nnl">
+                                <rect key="frame" x="16" y="757" width="352" height="65"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <nil key="textColor"/>
@@ -136,7 +136,7 @@
                         <outlet property="mapView" destination="wzg-To-K4T" id="vJw-wg-njc"/>
                         <outlet property="mitalinetextView" destination="W4K-dr-0Jo" id="Feb-JH-fA2"/>
                         <outlet property="titletextView" destination="b9h-Ob-PEw" id="Mpb-sb-UNL"/>
-                        <outlet property="urltextView" destination="68o-eV-491" id="qQn-OK-nel"/>
+                        <outlet property="urltextView" destination="i0X-DU-Nnl" id="xyW-8c-e9m"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dsa-l0-XjH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
