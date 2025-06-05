@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -14,25 +15,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
-        // Create a new UIWindow using the windowScene
         window = UIWindow(windowScene: windowScene)
 
-        // Set SigninViewController_2 as the root view controller inside a navigation controller
-        let rootVC = SigninViewController_2()
-        let navController = UINavigationController(rootViewController: rootVC)
+        let rootVC: UIViewController
+        let forceShowStartingPage = true // ← change to false when you're done testing
 
+        if forceShowStartingPage {
+            rootVC = StartingPageViewController()
+        } else if !UserDefaults.standard.bool(forKey: "hasLaunchedBefore") {
+            // First-time launch → show StartingPageViewController
+            UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+            rootVC = StartingPageViewController()
+        } else if let user = Auth.auth().currentUser, user.isEmailVerified {
+            // Already signed in & verified → go to MainPage
+            rootVC = MainPage()
+        } else {
+            // Not signed in → show Signin screen
+            rootVC = SigninViewController_2()
+        }
+
+        let navController = UINavigationController(rootViewController: rootVC)
         window?.rootViewController = navController
         window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}
-
     func sceneDidBecomeActive(_ scene: UIScene) {}
-
     func sceneWillResignActive(_ scene: UIScene) {}
-
     func sceneWillEnterForeground(_ scene: UIScene) {}
-
     func sceneDidEnterBackground(_ scene: UIScene) {}
 }
-

@@ -19,50 +19,16 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.badge.plus")
         imageView.tintColor = .systemBlue
-        imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 50
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
-    private let nameField: UITextField = {
-        let field = UITextField()
-        field.placeholder = "Full Name"
-        field.borderStyle = .roundedRect
-        field.autocapitalizationType = .words
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
-    }()
-
-    private let emailField: UITextField = {
-        let field = UITextField()
-        field.placeholder = "Email"
-        field.borderStyle = .roundedRect
-        field.keyboardType = .emailAddress
-        field.autocapitalizationType = .none
-        field.autocorrectionType = .no
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
-    }()
-
-    private let passwordField: UITextField = {
-        let field = UITextField()
-        field.placeholder = "Password"
-        field.borderStyle = .roundedRect
-        field.isSecureTextEntry = true
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
-    }()
-
-    private let confirmPasswordField: UITextField = {
-        let field = UITextField()
-        field.placeholder = "Confirm Password"
-        field.borderStyle = .roundedRect
-        field.isSecureTextEntry = true
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
-    }()
+    private let nameField = makeTextField(placeholder: "Full Name")
+    private let emailField = makeTextField(placeholder: "Email", keyboard: .emailAddress, capitalize: .none, correct: .no)
+    private let passwordField = makeSecureTextField(placeholder: "Password")
+    private let confirmPasswordField = makeSecureTextField(placeholder: "Confirm Password")
 
     private let signUpButton: UIButton = {
         let button = UIButton(type: .system)
@@ -91,12 +57,26 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
         view.backgroundColor = .systemBackground
         setupUI()
         setupActions()
+
+        // 👇 Tap to dismiss keyboard
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        logoImageView.layer.cornerRadius = logoImageView.frame.width / 2
     }
 
     private func setupUI() {
+        view.addSubview(logoImageView)
         view.addSubview(stackView)
 
-        stackView.addArrangedSubview(logoImageView)
         stackView.addArrangedSubview(nameField)
         stackView.addArrangedSubview(emailField)
         stackView.addArrangedSubview(passwordField)
@@ -104,14 +84,16 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
         stackView.addArrangedSubview(signUpButton)
         stackView.addArrangedSubview(termsLabel)
 
-        stackView.setCustomSpacing(40, after: logoImageView)
-        stackView.setCustomSpacing(10, after: signUpButton)
-
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80),
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.widthAnchor.constraint(equalToConstant: 100),
+            logoImageView.heightAnchor.constraint(equalToConstant: 100),
+
+            stackView.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 50),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            logoImageView.heightAnchor.constraint(equalToConstant: 100),
+
             signUpButton.heightAnchor.constraint(equalToConstant: 50)
         ])
 
@@ -125,6 +107,28 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
     }
 
     @objc private func selectProfileImage() {
+        let status = PHPhotoLibrary.authorizationStatus()
+        switch status {
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization { [weak self] newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        self?.presentPhotoPicker()
+                    } else {
+                        self?.showAlert(message: "写真ライブラリのアクセスが許可されていません")
+                    }
+                }
+            }
+        case .authorized, .limited:
+            presentPhotoPicker()
+        case .denied, .restricted:
+            showAlert(message: "写真ライブラリのアクセスが拒否されました。設定から許可を変更してください。")
+        @unknown default:
+            break
+        }
+    }
+
+    private func presentPhotoPicker() {
         var config = PHPickerConfiguration()
         config.filter = .images
         config.selectionLimit = 1
@@ -148,12 +152,6 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
         }
     }
 
-    private func showAlert(message: String) {
-        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
-
     @objc private func signUpTapped() {
         guard let name = nameField.text, !name.isEmpty,
               let email = emailField.text, !email.isEmpty,
@@ -174,51 +172,71 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
                 return
             }
 
-            guard let user = result?.user else { return }
+            guard let self = self, let user = result?.user else { return }
 
-            if let image = self?.logoImageView.image, let imageData = image.jpegData(compressionQuality: 0.75) {
+            let changeRequest = user.createProfileChangeRequest()
+            changeRequest.displayName = name
+
+            if let image = self.logoImageView.image,
+               let imageData = image.jpegData(compressionQuality: 0.75),
+               image != UIImage(systemName: "person.badge.plus") {
                 let storageRef = Storage.storage().reference().child("profile_images/\(user.uid).jpg")
                 storageRef.putData(imageData, metadata: nil) { _, error in
                     if let error = error {
-                        self?.showAlert(message: "Failed to upload profile image: \(error.localizedDescription)")
+                        self.showAlert(message: "Failed to upload profile image: \(error.localizedDescription)")
                         return
                     }
 
                     storageRef.downloadURL { url, _ in
-                        guard let downloadURL = url else {
-                            self?.showAlert(message: "Could not retrieve image URL.")
-                            return
+                        if let url = url {
+                            changeRequest.photoURL = url
                         }
-
-                        let changeRequest = user.createProfileChangeRequest()
-                        changeRequest.displayName = name
-                        changeRequest.photoURL = downloadURL
-                        changeRequest.commitChanges { error in
-                            if let error = error {
-                                self?.showAlert(message: "Profile update failed: \(error.localizedDescription)")
-                            } else {
-                                self?.transitionToMainPage()
-                            }
-                        }
+                        changeRequest.commitChanges { _ in }
                     }
                 }
             } else {
-                let changeRequest = user.createProfileChangeRequest()
-                changeRequest.displayName = name
-                changeRequest.commitChanges { error in
-                    if let error = error {
-                        self?.showAlert(message: "Profile update failed: \(error.localizedDescription)")
-                    } else {
-                        self?.transitionToMainPage()
-                    }
+                changeRequest.commitChanges { _ in }
+            }
+
+            user.sendEmailVerification { error in
+                if let error = error {
+                    self.showAlert(message: "Failed to send verification email: \(error.localizedDescription)")
+                    return
                 }
+
+                let alert = UIAlertController(
+                    title: "Thank You!",
+                    message: "Thank you for signing up! A verification email has been sent. Please verify your email to log in.",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                    self.navigationController?.popViewController(animated: true)
+                })
+                self.present(alert, animated: true)
             }
         }
     }
 
-    private func transitionToMainPage() {
-        let mainPageVC = MainPage()
-        mainPageVC.modalPresentationStyle = .fullScreen
-        present(mainPageVC, animated: true)
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
+}
+
+private func makeTextField(placeholder: String, keyboard: UIKeyboardType = .default, capitalize: UITextAutocapitalizationType = .sentences, correct: UITextAutocorrectionType = .default) -> UITextField {
+    let field = UITextField()
+    field.placeholder = placeholder
+    field.borderStyle = .roundedRect
+    field.keyboardType = keyboard
+    field.autocapitalizationType = capitalize
+    field.autocorrectionType = correct
+    field.translatesAutoresizingMaskIntoConstraints = false
+    return field
+}
+
+private func makeSecureTextField(placeholder: String) -> UITextField {
+    let field = makeTextField(placeholder: placeholder)
+    field.isSecureTextEntry = true
+    return field
 }

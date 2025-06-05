@@ -6,8 +6,8 @@ import FirebaseStorage
 
 class SigninViewController_2: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         view.backgroundColor = .systemBackground
         setupUI()
         setupActions()
@@ -214,18 +214,27 @@ class SigninViewController_2: UIViewController {
     @objc private func signInTapped() {
         guard let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty else {
-            let alert = UIAlertController(title: "Error", message: "Please enter both email and password", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
+            showAlert(title: "Error", message: "Please enter both email and password")
             return
         }
 
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard let self = self else { return }
+
             if let error = error {
                 print("Sign in failed: \(error.localizedDescription)")
-            } else {
-                print("Signed in as: \(result?.user.email ?? "Unknown")")
+                self.showAlert(title: "Sign In Error", message: error.localizedDescription)
+                return
+            }
+
+            guard let user = result?.user else { return }
+
+            if user.isEmailVerified {
+                print("✅ Email verified. Signed in as: \(user.email ?? "Unknown")")
                 self.transitionToMainPage()
+            } else {
+                print("❌ Email not verified.")
+                self.showAlert(title: "Email Not Verified", message: "Please verify your email address before signing in.")
             }
         }
     }
@@ -239,8 +248,6 @@ class SigninViewController_2: UIViewController {
             print("❌ Could not load CLIENT_ID from plist")
             return
         }
-
-        print("✅ Got clientID: \(clientID)")
 
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
@@ -268,12 +275,12 @@ class SigninViewController_2: UIViewController {
                 accessToken: user.accessToken.tokenString
             )
 
-            Auth.auth().signIn(with: credential) { authResult, error in
+            Auth.auth().signIn(with: credential) { [weak self] authResult, error in
                 if let error = error {
                     print("❌ Firebase Google Sign-In failed: \(error.localizedDescription)")
                 } else {
                     print("✅ Signed in with Google: \(authResult?.user.email ?? "Unknown")")
-                    self.transitionToMainPage()
+                    self?.transitionToMainPage()
                 }
             }
         }
@@ -308,7 +315,6 @@ class SigninViewController_2: UIViewController {
         navigationController?.pushViewController(signUpVC, animated: true)
     }
 
-    // MARK: - Navigation to MainPage
     private func transitionToMainPage() {
         let mainVC = MainPage()
         let nav = UINavigationController(rootViewController: mainVC)
@@ -318,5 +324,11 @@ class SigninViewController_2: UIViewController {
             sceneDelegate.window?.rootViewController = nav
             sceneDelegate.window?.makeKeyAndVisible()
         }
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
