@@ -1,96 +1,91 @@
-//
-//  MainPage.swift
-//  Hiroo App
-//
-//  Created by ard on 2025/06/04.
-//
 import UIKit
 
 class MainPage: UIViewController {
 
-    private let blossomLayer = UIView() // 🌸 behind all UI
+    private let headerImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "graduationcap.fill")
+        imageView.tintColor = .systemBlue
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "広尾"
-        label.font = UIFont.systemFont(ofSize: 54, weight: .heavy)
+        label.font = UIFont.systemFont(ofSize: 44, weight: .bold)
         label.textColor = .label
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "ようこそ！\n広尾の世界観ががここから始まる"
+        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .center
+        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     private let welcomeImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "welcome_ribbon") // 🖼 Add this image to Assets!
+        imageView.image = UIImage(named: "welcome_ribbon")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
-    private let gakuenButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("広尾学園", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.systemBlue
-        button.layer.cornerRadius = 30
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    private let koishikawaButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("広尾小石川", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.systemGreen
-        button.layer.cornerRadius = 30
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private let gakuenButton = LogoButton(imageName: "HirooGakuen", title: "広尾学園")
+    private let koishikawaButton = LogoButton(imageName: "HirooKoishikawa", title: "広尾小石川")
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.systemGroupedBackground
-        setupLayout()
+        view.backgroundColor = UIColor.systemBackground
+
+        setupUI()
         setupActions()
-        animateSakuraBlossoms()
+        animateEntrance()
     }
 
-    private func setupLayout() {
-        // 🌸 Add background blossom layer first
-        blossomLayer.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(blossomLayer)
-        NSLayoutConstraint.activate([
-            blossomLayer.topAnchor.constraint(equalTo: view.topAnchor),
-            blossomLayer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            blossomLayer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            blossomLayer.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-
+    private func setupUI() {
+        view.addSubview(headerImage)
         view.addSubview(titleLabel)
+        view.addSubview(subtitleLabel)
         view.addSubview(welcomeImage)
         view.addSubview(gakuenButton)
         view.addSubview(koishikawaButton)
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80),
+            headerImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            headerImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            headerImage.widthAnchor.constraint(equalToConstant: 60),
+            headerImage.heightAnchor.constraint(equalToConstant: 60),
+
+            titleLabel.topAnchor.constraint(equalTo: headerImage.bottomAnchor, constant: 12),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            welcomeImage.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            welcomeImage.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: -20),
-            welcomeImage.widthAnchor.constraint(equalToConstant: 140),
-            welcomeImage.heightAnchor.constraint(equalToConstant: 50),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            gakuenButton.topAnchor.constraint(equalTo: welcomeImage.bottomAnchor, constant: 150),
-            gakuenButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-            gakuenButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            welcomeImage.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 16),
+            welcomeImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            welcomeImage.widthAnchor.constraint(equalToConstant: 160),
+            welcomeImage.heightAnchor.constraint(equalToConstant: 60),
+
+            gakuenButton.topAnchor.constraint(equalTo: welcomeImage.bottomAnchor, constant: 60),
+            gakuenButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            gakuenButton.widthAnchor.constraint(equalToConstant: 280),
             gakuenButton.heightAnchor.constraint(equalToConstant: 60),
 
-            koishikawaButton.topAnchor.constraint(equalTo: gakuenButton.bottomAnchor, constant: 25),
-            koishikawaButton.leadingAnchor.constraint(equalTo: gakuenButton.leadingAnchor),
-            koishikawaButton.trailingAnchor.constraint(equalTo: gakuenButton.trailingAnchor),
-            koishikawaButton.heightAnchor.constraint(equalToConstant: 60)
+            koishikawaButton.topAnchor.constraint(equalTo: gakuenButton.bottomAnchor, constant: 20),
+            koishikawaButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            koishikawaButton.widthAnchor.constraint(equalTo: gakuenButton.widthAnchor),
+            koishikawaButton.heightAnchor.constraint(equalTo: gakuenButton.heightAnchor)
         ])
     }
 
@@ -100,34 +95,72 @@ class MainPage: UIViewController {
     }
 
     @objc private func openGakuen() {
+        print("Tapped 広尾学園") // for debug
         let vc = HirooGakuenViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func openKoishikawa() {
+        print("Tapped 広尾小石川") // for debug
         let vc = HirooKoishikawaViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    // 🌸 Constant sakura fall
-    private func animateSakuraBlossoms() {
-        Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
-            let label = UILabel()
-            label.text = "🌸"
-            label.font = UIFont.systemFont(ofSize: CGFloat.random(in: 20...34))
-            let startX = CGFloat.random(in: 0...self.view.bounds.width)
-            label.frame = CGRect(x: startX, y: -40, width: 40, height: 40)
-            self.blossomLayer.addSubview(label)
-
-            let endX = startX + CGFloat.random(in: -50...50)
-            let duration = Double.random(in: 6...10)
-
-            UIView.animate(withDuration: duration, delay: 0, options: [.curveLinear], animations: {
-                label.frame = CGRect(x: endX, y: self.view.bounds.height + 40, width: 40, height: 40)
-                label.alpha = 0.0
-            }, completion: { _ in
-                label.removeFromSuperview()
-            })
+    private func animateEntrance() {
+        view.subviews.forEach { $0.alpha = 0 }
+        UIView.animate(withDuration: 0.8) {
+            self.view.subviews.forEach { $0.alpha = 1 }
         }
+    }
+}
+
+// MARK: - Custom UIButton with Centered Logo + Text
+class LogoButton: UIButton {
+    init(imageName: String, title: String) {
+        super.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .secondarySystemBackground
+        layer.cornerRadius = 14
+        layer.borderColor = UIColor.systemGray4.cgColor
+        layer.borderWidth = 1
+        clipsToBounds = true
+
+        // Make sure internal views don't block touches
+        isUserInteractionEnabled = true
+
+        let logo = UIImageView(image: UIImage(named: imageName))
+        logo.contentMode = .scaleAspectFit
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        logo.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        logo.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        logo.isUserInteractionEnabled = false
+
+        let label = UILabel()
+        label.text = title
+        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        label.textColor = .label
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
+
+        let hStack = UIStackView(arrangedSubviews: [logo, label])
+        hStack.axis = .horizontal
+        hStack.spacing = 12
+        hStack.alignment = .center
+        hStack.translatesAutoresizingMaskIntoConstraints = false
+        hStack.isUserInteractionEnabled = false
+
+        addSubview(hStack)
+
+        NSLayoutConstraint.activate([
+            hStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+            hStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            hStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16),
+            hStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16)
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
