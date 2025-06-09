@@ -255,9 +255,9 @@ class StartingPageViewController: UIViewController {
     private func requestNotificationPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
-                print("❌ Notification error: \(error)")
+                print("Notification error 🔺: \(error)")
             } else {
-                print("🔔 Notification granted: \(granted)")
+                print("Notification granted 🟢: \(granted)")
             }
         }
     }

@@ -58,7 +58,7 @@ class SignUpViewController: UIViewController, PHPickerViewControllerDelegate {
         setupUI()
         setupActions()
 
-        // 👇 Tap to dismiss keyboard
+        //tap somewhere random to get rid of the keyboard
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
