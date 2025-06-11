@@ -1,5 +1,5 @@
 //
-//  koishikawamap.swift
+//  hiroomap.swift
 //  Hiroo App
 //
 //  Created by 井上　希稟 on 2025/04/23.
@@ -9,10 +9,10 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class koishikawamap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+class hiroomap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var urltextView: UILabel!
-    @IBOutlet weak var mitalinetextView: UILabel!
+    @IBOutlet weak var tokyometrolabel: UILabel!
     @IBOutlet weak var titletextView: UILabel!
     @IBOutlet weak var bustextView: UILabel!
   
@@ -78,14 +78,14 @@ class koishikawamap: UIViewController, CLLocationManagerDelegate, MKMapViewDeleg
 
         // Set up map region and annotation
         let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-        let hgk = CLLocationCoordinate2DMake(35.728851235181615, 139.7468261848643)
-        let region = MKCoordinateRegion(center: hgk, span: span)
+        let hg = CLLocationCoordinate2DMake(35.728851235181615, 139.7468261848643)
+        let region = MKCoordinateRegion(center: hg, span: span)
         mapView.setRegion(region, animated: true)
 
         let pin = MKPointAnnotation()
-        pin.title = "広尾学園小石川"
-        pin.subtitle = "hiroo gakuen koishikawa"
-        pin.coordinate = hgk
+        pin.title = "広尾学園"
+        pin.subtitle = "hiroo gakuen"
+        pin.coordinate = hg
         mapView.addAnnotation(pin)
     }
     
