@@ -1,18 +1,18 @@
 import UIKit
 import GoogleSignIn
 import FirebaseAuth
+import FirebaseCore
 import FirebaseStorage
 
 class SigninViewController_2: UIViewController {
-    
-    override func viewWillAppear(_ animated :Bool) {
+
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print ("aaa")
-        view.backgroundColor = .black
+        view.backgroundColor = .systemBackground
         setupUI()
         setupActions()
     }
-    
+
     // MARK: - UI Components
     private let stackView: UIStackView = {
         let stack = UIStackView()
@@ -23,7 +23,7 @@ class SigninViewController_2: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
-    
+
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle.fill")
@@ -32,7 +32,7 @@ class SigninViewController_2: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
+
     private let emailField: UITextField = {
         let field = UITextField()
         field.placeholder = "Email"
@@ -43,7 +43,7 @@ class SigninViewController_2: UIViewController {
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
-    
+
     private let passwordField: UITextField = {
         let field = UITextField()
         field.placeholder = "Password"
@@ -52,7 +52,7 @@ class SigninViewController_2: UIViewController {
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
-    
+
     private let forgotPasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Forgot Password?", for: .normal)
@@ -61,7 +61,7 @@ class SigninViewController_2: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     private let signInButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Sign In", for: .normal)
@@ -72,13 +72,13 @@ class SigninViewController_2: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     private let separatorView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
+
     private let orLabel: UILabel = {
         let label = UILabel()
         label.text = "OR"
@@ -88,7 +88,7 @@ class SigninViewController_2: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let gmailButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Sign in with Google", for: .normal)
@@ -98,17 +98,17 @@ class SigninViewController_2: UIViewController {
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.systemGray4.cgColor
-        
+
         if let googleLogo = UIImage(named: "google_logo") ?? UIImage(systemName: "g.circle.fill") {
             let resizedLogo = googleLogo.withRenderingMode(.alwaysOriginal)
             button.setImage(resizedLogo, for: .normal)
             button.imageView?.contentMode = .scaleAspectFit
         }
-        
+
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     private let signUpButton: UIButton = {
         let button = UIButton(type: .system)
         let attributedTitle = NSMutableAttributedString(
@@ -124,18 +124,17 @@ class SigninViewController_2: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
-    // MARK: - Setup
+
+    // MARK: - Setup UI
     private func setupUI() {
-        print("aaa")
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
-        
+
         scrollView.addSubview(stackView)
-        
+
         let separatorStackView = createSeparatorWithLabel()
-        
+
         stackView.addArrangedSubview(logoImageView)
         stackView.addArrangedSubview(emailField)
         stackView.addArrangedSubview(passwordField)
@@ -144,95 +143,192 @@ class SigninViewController_2: UIViewController {
         stackView.addArrangedSubview(separatorStackView)
         stackView.addArrangedSubview(gmailButton)
         stackView.addArrangedSubview(signUpButton)
-        
+
         stackView.setCustomSpacing(40, after: logoImageView)
         stackView.setCustomSpacing(30, after: separatorStackView)
         stackView.setCustomSpacing(20, after: gmailButton)
-        
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
+
             stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 20),
             stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 40),
             stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -40),
             stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -80),
-            
+
             logoImageView.heightAnchor.constraint(equalToConstant: 100),
             signInButton.heightAnchor.constraint(equalToConstant: 50),
             gmailButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
-    
+
     private func createSeparatorWithLabel() -> UIView {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         let leftLine = UIView()
         leftLine.backgroundColor = .systemGray4
         leftLine.translatesAutoresizingMaskIntoConstraints = false
-        
+
         let rightLine = UIView()
         rightLine.backgroundColor = .systemGray4
         rightLine.translatesAutoresizingMaskIntoConstraints = false
-        
+
         containerView.addSubview(leftLine)
         containerView.addSubview(orLabel)
         containerView.addSubview(rightLine)
-        
+
         NSLayoutConstraint.activate([
             containerView.heightAnchor.constraint(equalToConstant: 30),
-            
+
             leftLine.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             leftLine.trailingAnchor.constraint(equalTo: orLabel.leadingAnchor, constant: -10),
             leftLine.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             leftLine.heightAnchor.constraint(equalToConstant: 1),
-            
+
             orLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             orLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            
+
             rightLine.leadingAnchor.constraint(equalTo: orLabel.trailingAnchor, constant: 10),
             rightLine.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             rightLine.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             rightLine.heightAnchor.constraint(equalToConstant: 1)
         ])
-        
+
         return containerView
     }
-    
+
+    // MARK: - Setup Actions
     private func setupActions() {
         signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
         gmailButton.addTarget(self, action: #selector(gmailSignInTapped), for: .touchUpInside)
         forgotPasswordButton.addTarget(self, action: #selector(forgotPasswordTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
     }
-    
+
     // MARK: - Actions
     @objc private func signInTapped() {
         guard let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty else {
-            let alert = UIAlertController(title: "Error", message: "Please enter both email and password", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
+            showAlert(title: "Error", message: "Please enter both email and password")
             return
         }
-        
-        print("Sign in with email: \(email)")
+
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Sign in failed: \(error.localizedDescription)")
+                self.showAlert(title: "Sign In Error", message: error.localizedDescription)
+                return
+            }
+
+            guard let user = result?.user else { return }
+
+            if user.isEmailVerified {
+                print("✅ Email verified. Signed in as: \(user.email ?? "Unknown")")
+                self.transitionToMainPage()
+            } else {
+                print("❌ Email not verified.")
+                self.showAlert(title: "Email Not Verified", message: "Please verify your email address before signing in.")
+            }
+        }
     }
-    
+
     @objc private func gmailSignInTapped() {
-        print("Google Sign-In tapped")
+        print("Tapped Google Sign-In")
+
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+              let dict = NSDictionary(contentsOfFile: path),
+              let clientID = dict["CLIENT_ID"] as? String else {
+            print("❌ Could not load CLIENT_ID from plist")
+            return
+        }
+
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            print("❌ Could not get root view controller")
+            return
+        }
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootVC) { result, error in
+            if let error = error {
+                print("❌ Google Sign-In error: \(error.localizedDescription)")
+                return
+            }
+
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString else {
+                print("❌ No ID token from Google")
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: user.accessToken.tokenString
+            )
+
+            Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                if let error = error {
+                    print("❌ Firebase Google Sign-In failed: \(error.localizedDescription)")
+                } else {
+                    print("✅ Signed in with Google: \(authResult?.user.email ?? "Unknown")")
+                    self?.transitionToMainPage()
+                }
+            }
+        }
     }
-    
+
     @objc private func forgotPasswordTapped() {
-        print("Forgot password tapped")
+        let alert = UIAlertController(title: "Reset Password", message: "Enter your email to receive reset instructions.", preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.placeholder = "Email"
+            textField.keyboardType = .emailAddress
+        }
+
+        let send = UIAlertAction(title: "Send", style: .default) { _ in
+            guard let email = alert.textFields?.first?.text, !email.isEmpty else { return }
+
+            Auth.auth().sendPasswordReset(withEmail: email) { error in
+                if let error = error {
+                    print("Failed to send reset email: \(error.localizedDescription)")
+                } else {
+                    print("Reset email sent to \(email)")
+                }
+            }
+        }
+
+        alert.addAction(send)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
-    
+
     @objc private func signUpTapped() {
         let signUpVC = SignUpViewController()
         navigationController?.pushViewController(signUpVC, animated: true)
+    }
+
+    private func transitionToMainPage() {
+        let mainVC = MainPage()
+        let nav = UINavigationController(rootViewController: mainVC)
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = windowScene.delegate as? SceneDelegate {
+            sceneDelegate.window?.rootViewController = nav
+            sceneDelegate.window?.makeKeyAndVisible()
+        }
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
