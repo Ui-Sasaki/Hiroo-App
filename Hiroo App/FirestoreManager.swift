@@ -7,7 +7,6 @@
 import UIKit
 import FirebaseFirestore
 
-
 class FirestoreManager {
     static let shared = FirestoreManager()
     private let db = Firestore.firestore()
@@ -17,17 +16,22 @@ class FirestoreManager {
             "name": person.name,
             "age": person.age,
             "clothes": person.clothes,
-            "last_seen": person.lastSeenLocation,
+            "last_seen_location": person.lastSeenLocation,
             "reported_by": person.reportedBy,
             "timestamp": Timestamp(date: Date())
         ]) { error in
-            if let error = error {
-                print("迷子情報の保存失敗: \(error.localizedDescription)")
-                completion(false)
-            } else {
-                print("迷子情報の保存成功")
-                completion(true)
-            }
+            completion(error == nil)
+        }
+    }
+
+    func insertFoundPerson(_ person: MissingPersonViewController.FoundPerson, completion: @escaping (Bool) -> Void) {
+        db.collection("found_persons").document(person.documentID).setData([
+            "name": person.name,
+            "found_location": person.foundLocation,
+            "timestamp": Timestamp(date: Date())
+        ]) { error in
+            completion(error == nil)
         }
     }
 }
+
