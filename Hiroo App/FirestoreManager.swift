@@ -5,6 +5,7 @@
 //  Created by 井上　希稟 on 2025/05/14.
 //
 import FirebaseFirestore
+import UIKit
 
 class FirestoreManager {
     static let shared = FirestoreManager()
