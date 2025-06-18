@@ -10,11 +10,11 @@ import MapKit
 import CoreLocation
 
 class hiroomap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
-    @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var urltextView: UILabel!
-    @IBOutlet weak var tokyometrolabel: UILabel!
-    @IBOutlet weak var titletextView: UILabel!
-    @IBOutlet weak var bustextView: UILabel!
+    weak var mapView: MKMapView!
+    weak var urltextView: UILabel!
+    weak var tokyometrolabel: UILabel!
+    weak var titletextView: UILabel!
+    weak var bustextView: UILabel!
   
     var locationManager: CLLocationManager!
     

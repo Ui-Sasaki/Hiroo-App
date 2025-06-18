@@ -73,12 +73,6 @@ class SigninViewController_2: UIViewController {
         return button
     }()
 
-    private let separatorView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     private let orLabel: UILabel = {
         let label = UILabel()
         label.text = "OR"
@@ -98,13 +92,11 @@ class SigninViewController_2: UIViewController {
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.systemGray4.cgColor
-
         if let googleLogo = UIImage(named: "google_logo") ?? UIImage(systemName: "g.circle.fill") {
             let resizedLogo = googleLogo.withRenderingMode(.alwaysOriginal)
             button.setImage(resizedLogo, for: .normal)
             button.imageView?.contentMode = .scaleAspectFit
         }
-
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -212,6 +204,8 @@ class SigninViewController_2: UIViewController {
 
     // MARK: - Actions
     @objc private func signInTapped() {
+        view.endEditing(true)
+
         guard let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty else {
             showAlert(title: "Error", message: "Please enter both email and password")
@@ -234,13 +228,20 @@ class SigninViewController_2: UIViewController {
                 self.transitionToMainPage()
             } else {
                 print("❌ Email not verified.")
-                self.showAlert(title: "Email Not Verified", message: "Please verify your email address before signing in.")
+                self.showAlert(title: "Email Not Verified", message: "Please verify your email address. A new verification email will be sent.")
+                user.sendEmailVerification { error in
+                    if let error = error {
+                        print("❌ Failed to send verification email: \(error.localizedDescription)")
+                    } else {
+                        print("✅ Verification email sent.")
+                    }
+                }
             }
         }
     }
 
     @objc private func gmailSignInTapped() {
-        print("Tapped Google Sign-In")
+        view.endEditing(true)
 
         guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
               let dict = NSDictionary(contentsOfFile: path),
@@ -287,6 +288,8 @@ class SigninViewController_2: UIViewController {
     }
 
     @objc private func forgotPasswordTapped() {
+        view.endEditing(true)
+
         let alert = UIAlertController(title: "Reset Password", message: "Enter your email to receive reset instructions.", preferredStyle: .alert)
         alert.addTextField { textField in
             textField.placeholder = "Email"
@@ -294,6 +297,7 @@ class SigninViewController_2: UIViewController {
         }
 
         let send = UIAlertAction(title: "Send", style: .default) { _ in
+            self.view.endEditing(true)
             guard let email = alert.textFields?.first?.text, !email.isEmpty else { return }
 
             Auth.auth().sendPasswordReset(withEmail: email) { error in
@@ -311,6 +315,7 @@ class SigninViewController_2: UIViewController {
     }
 
     @objc private func signUpTapped() {
+        view.endEditing(true)
         let signUpVC = SignUpViewController()
         navigationController?.pushViewController(signUpVC, animated: true)
     }
