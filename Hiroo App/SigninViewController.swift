@@ -4,7 +4,7 @@ import FirebaseAuth
 import FirebaseCore
 import FirebaseStorage
 
-class SigninViewController_2: UIViewController {
+class SigninViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

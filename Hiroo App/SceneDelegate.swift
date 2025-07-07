@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             rootVC = MainPage()
         } else {
             // Not signed in → show Signin screen
-            rootVC = SigninViewController_2()
+            rootVC = SigninViewController()
         }
 
         let navController = UINavigationController(rootViewController: rootVC)

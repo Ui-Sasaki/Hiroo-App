@@ -248,7 +248,7 @@ class StartingPageViewController: UIViewController {
     }
 
     @objc private func didTapSignIn() {
-        let vc = SigninViewController_2()
+        let vc = SigninViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
 
