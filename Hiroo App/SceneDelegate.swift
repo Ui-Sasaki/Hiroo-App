@@ -12,25 +12,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-    internal func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
 
         let rootVC: UIViewController
-        let forceShowStartingPage = true // ← change to false when you're done testing
+        let forceShowStartingPage = false // ✅ Set to false for production, true to test intro screen
 
         if forceShowStartingPage {
             rootVC = StartingPageViewController()
         } else if !UserDefaults.standard.bool(forKey: "hasLaunchedBefore") {
-            // First-time launch → show StartingPageViewController
+            // 🌱 First-time launch → show intro/tutorial
             UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
             rootVC = StartingPageViewController()
-        } else if let user = Auth.auth().currentUser, user.isEmailVerified {
-            // Already signed in & verified → go to MainPage
-            rootVC = MainPage()
+        } else if let user = Auth.auth().currentUser {
+            if user.isEmailVerified {
+                // ✅ Already signed in and verified → go to main page
+                rootVC = MainPage()
+            } else {
+                // ❌ Signed in but not verified → go to sign-in page
+                rootVC = SigninViewController_2()
+            }
         } else {
-            // Not signed in → show Signin screen
+            // 🚪 Not signed in → go to sign-in page
             rootVC = SigninViewController_2()
         }
 

@@ -1,9 +1,3 @@
-//
-//  HirooGakuenViewController.swift
-//  Hiroo App
-//
-//  Created by ard on 2025/06/05.
-//
 import UIKit
 
 class HirooGakuenViewController: UIViewController {
@@ -17,10 +11,10 @@ class HirooGakuenViewController: UIViewController {
     
     private func setupIconButtons() {
         let icons = [
-            ("Missing", UIImage(systemName: "person.fill.questionmark")!, #selector(missingTapped)),
-            ("Map", UIImage(systemName: "map.fill")!, #selector(mapTapped)),
-            ("Congestion", UIImage(systemName: "waveform.path.ecg")!, #selector(congestionTapped)),
-            ("Timetable", UIImage(systemName: "calendar")!, #selector(timetableTapped))
+            ("Missing", UIImage(systemName: "person.fill.questionmark")!.withRenderingMode(.alwaysTemplate), #selector(missingTapped)),
+            ("Map", UIImage(systemName: "map")!.withRenderingMode(.alwaysTemplate), #selector(mapTapped)),
+            ("Congestion", UIImage(systemName: "person.2.fill")!.withRenderingMode(.alwaysTemplate), #selector(congestionTapped)),
+            ("Timetable", UIImage(systemName: "clock")!.withRenderingMode(.alwaysTemplate), #selector(timetableTapped))
         ]
         
         // Container with pill shape
@@ -61,11 +55,12 @@ class HirooGakuenViewController: UIViewController {
             verticalStack.translatesAutoresizingMaskIntoConstraints = false
             
             let button = UIButton(type: .system)
-            button.setImage(image.withRenderingMode(.alwaysOriginal), for: .normal)
-            button.addTarget(self, action: action, for: .touchUpInside)
+            button.setImage(image, for: .normal)
+            button.tintColor = .black
             button.translatesAutoresizingMaskIntoConstraints = false
             button.backgroundColor = .white
             button.layer.cornerRadius = 12
+            button.addTarget(self, action: action, for: .touchUpInside)
             
             NSLayoutConstraint.activate([
                 button.widthAnchor.constraint(equalToConstant: 50),
