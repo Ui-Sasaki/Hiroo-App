@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E178FAA2E27C0BA001C856A /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 2E178FA92E27C0BA001C856A /* SideMenu */; };
 		2E3F84412DD43B10002C1EE1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2E3F84402DD43B10002C1EE1 /* FirebaseAuth */; };
 		2E3F84442DD43C8F002C1EE1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2E3F84432DD43C8F002C1EE1 /* GoogleSignIn */; };
 		2E3F84462DD4952B002C1EE1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2E3F84452DD4952B002C1EE1 /* FirebaseStorage */; };
@@ -75,6 +76,7 @@
 				2E3F84412DD43B10002C1EE1 /* FirebaseAuth in Frameworks */,
 				5556FEC32DDDE51A004E76FF /* FirebaseFirestore in Frameworks */,
 				2E3F84442DD43C8F002C1EE1 /* GoogleSignIn in Frameworks */,
+				2E178FAA2E27C0BA001C856A /* SideMenu in Frameworks */,
 				2E3F84462DD4952B002C1EE1 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +142,7 @@
 				2E3F84432DD43C8F002C1EE1 /* GoogleSignIn */,
 				2E3F84452DD4952B002C1EE1 /* FirebaseStorage */,
 				5556FEC22DDDE51A004E76FF /* FirebaseFirestore */,
+				2E178FA92E27C0BA001C856A /* SideMenu */,
 			);
 			productName = "Hiroo App";
 			productReference = 2EA831EF2D65F58300CAA38E /* Hiroo App.app */;
@@ -226,6 +229,7 @@
 			packageReferences = (
 				2E3F843F2DD43B10002C1EE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				2E3F84422DD43C8F002C1EE1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				2E178FA82E27C0BA001C856A /* XCRemoteSwiftPackageReference "SideMenu" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2EA831F02D65F58300CAA38E /* Products */;
@@ -588,6 +592,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2E178FA82E27C0BA001C856A /* XCRemoteSwiftPackageReference "SideMenu" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jonkykong/SideMenu";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.5.0;
+			};
+		};
 		2E3F843F2DD43B10002C1EE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -607,6 +619,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2E178FA92E27C0BA001C856A /* SideMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E178FA82E27C0BA001C856A /* XCRemoteSwiftPackageReference "SideMenu" */;
+			productName = SideMenu;
+		};
 		2E3F84402DD43B10002C1EE1 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2E3F843F2DD43B10002C1EE1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
