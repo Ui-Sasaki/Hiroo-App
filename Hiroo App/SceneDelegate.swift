@@ -12,13 +12,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+    // ✅ This is the only scene(_:willConnectTo:) you need.
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
 
         let rootVC: UIViewController
-        let forceShowStartingPage = false // ✅ Set to false for production, true to test intro screen
+        let forceShowStartingPage = false // ✅ Set to true to test intro screen
 
         if forceShowStartingPage {
             rootVC = StartingPageViewController()
@@ -28,8 +29,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             rootVC = StartingPageViewController()
         } else if let user = Auth.auth().currentUser {
             if user.isEmailVerified {
-                // ✅ Already signed in and verified → go to main page
-                rootVC = MainPage()
+                // ✅ Already signed in and verified → go to HirooGakuenViewController with tab bar
+                rootVC = HirooGakuenViewController()
             } else {
                 // ❌ Signed in but not verified → go to sign-in page
                 rootVC = SigninViewController_2()
