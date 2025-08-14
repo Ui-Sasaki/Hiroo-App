@@ -9,24 +9,24 @@ class MainTabBarViewController: UITabBarController {
         view.backgroundColor = .systemBackground
         title = "広尾学園"
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "<- Back",
-            style: .plain,
-            target: self,
-            action: #selector(backButtonTapped)
-        )
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(
+//            title: "<- Back",
+//            style: .plain,
+//            target: self,
+//            action: #selector(backButtonTapped)
+//        )
 
         setupTabBar()
         embedTabBar()
     }
 
-    @objc func backButtonTapped() {
-        guard let sceneDelegate = view.window?.windowScene?.delegate as? SceneDelegate else { return }
-
-        let mainPage = MainPage()
-        let nav = UINavigationController(rootViewController: mainPage)
-        sceneDelegate.window?.rootViewController = nav
-    }
+//    @objc func backButtonTapped() {
+//        guard let sceneDelegate = view.window?.windowScene?.delegate as? SceneDelegate else { return }
+//
+//        let mainPage = MainPage()
+//        let nav = UINavigationController(rootViewController: mainPage)
+//        sceneDelegate.window?.rootViewController = nav
+//    }
     
     private func setupTabBar() {
         let firstVC = MissingPersonViewController()

@@ -57,7 +57,7 @@ final class FirestoreManager {
             completion(. success(events))
         }
         }
-        func fetchboothevents(for school: School,
+        func fetchBoothEvents(for school: School,
                               completion: @escaping (Result<[Event], Error>) -> Void) {
             let ref = db
                 .collection("schools")

@@ -8,13 +8,20 @@
 import UIKit
 
 class BoothDetailViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
+    @IBOutlet private weak var titleLabel: UILabel!
+    @IBOutlet private weak var locationLabel: UILabel!
     
+    var event: Event!
+    var school: School!
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+            // Do any additional setup after loading the view.
+        }
+        
+    
+    
+   
 
     /*
     // MARK: - Navigation
