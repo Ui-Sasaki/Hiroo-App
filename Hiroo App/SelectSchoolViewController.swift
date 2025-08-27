@@ -12,6 +12,7 @@ class SelectSchoolViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("1")
     }
     
     @IBAction func selectHiroo() {

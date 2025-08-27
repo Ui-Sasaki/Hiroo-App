@@ -321,14 +321,14 @@ class SigninViewController_2: UIViewController {
     }
 
     private func transitionToMainPage() {
-//        let mainVC = MainPage()
-//        let nav = UINavigationController(rootViewController: mainVC)
-//
-//        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-//           let sceneDelegate = windowScene.delegate as? SceneDelegate {
-//            sceneDelegate.window?.rootViewController = nav
-//            sceneDelegate.window?.makeKeyAndVisible()
-//        }
+        let mainVC = SelectSchoolViewController()
+        let nav = UINavigationController(rootViewController: mainVC)
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = windowScene.delegate as? SceneDelegate {
+            sceneDelegate.window?.rootViewController = nav
+            sceneDelegate.window?.makeKeyAndVisible()
+        }
     }
 
     private func showAlert(title: String, message: String) {
