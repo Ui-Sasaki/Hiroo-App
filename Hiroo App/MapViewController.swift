@@ -67,8 +67,8 @@ final class MapViewController: UIViewController, CLLocationManagerDelegate, MKMa
                 subtitle: "Hiroo Gakuen",
                 coordinate: CLLocationCoordinate2D(latitude: 35.6514, longitude: 139.7209),
                 url: URL(string: "https://www.jorudan.co.jp/")!,
-                metroText: "東京メトロ 日比谷線 広尾駅から徒歩◯分",
-                busText: "都バス ◯◯系統「◯◯」下車すぐ"
+                metroText: "東京メトロ 日比谷線 広尾駅から4番出口すぐ",
+                busText: "都バス 黒77 目黒駅前-千駄ヶ谷駅前日赤医療センター下・広尾学園前下車すぐ"
             )
         case .koishikawa:
             return MapConfig(
@@ -76,31 +76,56 @@ final class MapViewController: UIViewController, CLLocationManagerDelegate, MKMa
                 subtitle: "Hiroo Gakuen Koishikawa",
                 coordinate: CLLocationCoordinate2D(latitude: 35.7289, longitude: 139.7468),
                 url: URL(string: "https://www.jorudan.co.jp/")!,
-                metroText: "東京メトロ 南北線・丸ノ内線 後楽園/本駒込 など",
-                busText: "都バス ◯◯系統「◯◯」下車すぐ"
+                metroText: "都営三田線 千石駅からA4出口徒歩5分",
+                busText: "都バス 上58 文京グリーンコート前 バス停より徒歩2分"
             )
         }
     }
     
     // MARK: - Lifecycle
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+////        print(UserDefaults.standard.selectedSchool)
+//        view.backgroundColor = .systemBackground
+//        view.addSubview(mapView)
+//        view.addSubview(urlLabel)
+//        view.addSubview(metroLabel)
+//        view.addSubview(titleLabel)
+//        view.addSubview(busLabel)
+//        mapView.delegate = self
+//        locationManager = CLLocationManager()
+//        locationManager.delegate = self
+//        locationManager.requestWhenInUseAuthorization()
+//        setupURLLabelTap()
+//        makeLabelSelectable(urlLabel)
+//        setupConstraints()
+//        applyConfig(for: UserDefaults.standard.selectedSchool)
+//    }
     override func viewDidLoad() {
-        super.viewDidLoad()
-        print(UserDefaults.standard.selectedSchool)
-        view.backgroundColor = .systemBackground
-        view.addSubview(mapView)
-        view.addSubview(urlLabel)
-        view.addSubview(metroLabel)
-        view.addSubview(titleLabel)
-        view.addSubview(busLabel)
-        mapView.delegate = self
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        setupURLLabelTap()
-        makeLabelSelectable(urlLabel)
-        applyConfig(for: UserDefaults.standard.selectedSchool)
-        setupConstraints()
-    }
+            super.viewDidLoad()
+            view.backgroundColor = .systemBackground
+
+            [titleLabel, metroLabel, busLabel, urlLabel].forEach { l in
+                l.translatesAutoresizingMaskIntoConstraints = false
+                l.numberOfLines = 0
+                l.font = .preferredFont(forTextStyle: (l === titleLabel) ? .title2 : .body)
+            }
+            mapView.translatesAutoresizingMaskIntoConstraints = false
+            mapView.delegate = self
+            locationManager = CLLocationManager()
+            locationManager.delegate = self
+            locationManager.requestWhenInUseAuthorization()
+            setupURLLabelTap()
+            makeLabelSelectable(urlLabel)
+            view.addSubview(titleLabel)
+            view.addSubview(metroLabel)
+            view.addSubview(busLabel)
+            view.addSubview(urlLabel)
+            view.addSubview(mapView)
+
+            setupConstraints()
+            applyConfig(for: UserDefaults.standard.selectedSchool)
+        }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

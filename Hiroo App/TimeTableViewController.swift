@@ -21,7 +21,7 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "広尾学園"
+        title = "Timetable"
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
