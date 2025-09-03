@@ -62,13 +62,13 @@ class MissingPersonViewController: UIViewController {
         }
 
         // プレースホルダー設定
-        nameTextField.placeholder = "迷子の名前"
-        ageTextField.placeholder = "年齢"
-        clothesTextField.placeholder = "服装"
-        lastSeenTextField.placeholder = "最後に見かけた場所"
-        reporterTextField.placeholder = "探している人の名前"
-        foundNameTextField.placeholder = "発見された迷子の名前"
-        foundLocationTextField.placeholder = "見つかった場所"
+        nameTextField.placeholder = "迷子の名前/ lost person's name"
+        ageTextField.placeholder = "年齢/ lost person's age"
+        clothesTextField.placeholder = "服装/ clothing"
+        lastSeenTextField.placeholder = "最後に見かけた場所/ last seen location"
+        reporterTextField.placeholder = "探している人の名前/ person searching"
+        foundNameTextField.placeholder = "発見された迷子の名前/ found lost person's name"
+        foundLocationTextField.placeholder = "見つかった場所/ where they are found"
 
         // 登録ボタン設定
         registerButton.setTitle("迷子を登録", for: .normal)

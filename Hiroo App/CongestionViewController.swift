@@ -19,12 +19,33 @@ class CongestionViewController: UIViewController {
             super.viewWillAppear(animated)
             loadBooths()
         }
-        override func viewDidLoad() {
+    override func viewDidLoad() {
             super.viewDidLoad()
+            view.backgroundColor = .systemBackground
+            
+            titleLabel.font = .preferredFont(forTextStyle: .title2)
+            titleLabel.numberOfLines = 0
+            
+            titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            tableView.translatesAutoresizingMaskIntoConstraints = false
+            tableView.backgroundColor = .red
+            
             view.addSubview(titleLabel)
-                    view.addSubview(tableView)
+            view.addSubview(tableView)
+            NSLayoutConstraint.activate([
+                titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+                titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+                titleLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+                
+                tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+                tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+                tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+            
             configureTableView()
             loadBooths()
+            
             navigationItem.leftBarButtonItem = UIBarButtonItem(
                 image: UIImage(systemName: "line.horizontal.3"),
                 style: .plain,
@@ -32,6 +53,19 @@ class CongestionViewController: UIViewController {
                 action: #selector(openMenu)
             )
         }
+//        override func viewDidLoad() {
+//            super.viewDidLoad()
+//            view.addSubview(titleLabel)
+//                    view.addSubview(tableView)
+//            configureTableView()
+//            loadBooths()
+//            navigationItem.leftBarButtonItem = UIBarButtonItem(
+//                image: UIImage(systemName: "line.horizontal.3"),
+//                style: .plain,
+//                target: self,
+//                action: #selector(openMenu)
+//            )
+//        }
         
         @objc private func openMenu() {
             if let menu = SideMenuManager.default.leftMenuNavigationController {
@@ -65,6 +99,7 @@ class CongestionViewController: UIViewController {
             }
         }
     }
+
 // MARK: - UITableViewDataSource
 extension CongestionViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
