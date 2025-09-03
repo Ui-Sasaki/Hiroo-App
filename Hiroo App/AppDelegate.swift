@@ -3,14 +3,9 @@ import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    // ✅ REQUIRED for Firebase to configure BEFORE your app starts
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
         FirebaseApp.configure()
-        print("✅ Firebase configured") // ← Confirm this appears in console
-
         return true
     }
 

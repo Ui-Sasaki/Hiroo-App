@@ -12,7 +12,6 @@ class SelectSchoolViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("1")
     }
     
     @IBAction func selectHiroo() {
@@ -23,22 +22,21 @@ class SelectSchoolViewController: UIViewController {
         UserDefaults.standard.selectedSchool = .koishikawa
         toMainTabBar()
     }
-    @objc func toMainTabBar(){
-        // ストーリーボードからタブバーを取り出す
+    @objc func toMainTabBar() {
         let sb = UIStoryboard(name: "Main", bundle: nil)
         guard let tabBar = sb.instantiateViewController(
             withIdentifier: "MainTabBarController"
-        ) as? UITabBarController
-        else {
+        ) as? MainTabBarViewController else {
             return
         }
-        
-        // SceneDelegate 経由でアプリ全体の root にする
-        if let windowScene = view.window?.windowScene,
-           let sceneDelegate = windowScene.delegate as? SceneDelegate,
-           let window = sceneDelegate.window {
-            window.rootViewController = tabBar
-            window.makeKeyAndVisible()
+        DispatchQueue.main.async {
+            if let windowScene = self.view.window?.windowScene,
+               let sceneDelegate = windowScene.delegate as? SceneDelegate,
+               let window = sceneDelegate.window {
+                window.rootViewController = tabBar
+                window.makeKeyAndVisible()
+            }
         }
     }
+
 }

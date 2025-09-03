@@ -4,10 +4,11 @@ import FirebaseAuth
 import FirebaseCore
 import FirebaseStorage
 
-class SigninViewController_2: UIViewController {
+class SigninViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("SignInViewController")
         view.backgroundColor = .systemBackground
         setupUI()
         setupActions()
@@ -204,39 +205,24 @@ class SigninViewController_2: UIViewController {
 
     // MARK: - Actions
     @objc private func signInTapped() {
-        view.endEditing(true)
-
+        print("signInTapped")
         guard let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty else {
             showAlert(title: "Error", message: "Please enter both email and password")
             return
         }
-
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
             guard let self = self else { return }
-
             if let error = error {
-                print("Sign in failed: \(error.localizedDescription)")
-                self.showAlert(title: "Sign In Error", message: error.localizedDescription)
+                print(error.localizedDescription)
                 return
             }
-
-            guard let user = result?.user else { return }
-
-            if user.isEmailVerified {
-                print("✅ Email verified. Signed in as: \(user.email ?? "Unknown")")
-                self.transitionToMainPage()
-            } else {
-                print("❌ Email not verified.")
-                self.showAlert(title: "Email Not Verified", message: "Please verify your email address. A new verification email will be sent.")
-                user.sendEmailVerification { error in
-                    if let error = error {
-                        print("❌ Failed to send verification email: \(error.localizedDescription)")
-                    } else {
-                        print("✅ Verification email sent.")
-                    }
-                }
+            guard let user = result?.user else {
+                print("ユーザー情報が取得できませんでした。")
+                return
             }
+            print("ログインに成功しました: \(user.uid)")
+            print("ログイン成功！")
         }
     }
 

@@ -7,16 +7,6 @@
 import UIKit
 import FirebaseFirestore
 
-struct Event {
-    let id: String
-    let name: String
-    let location: String
-    let congestion: Int
-    let type: String
-    let startTime: Date
-    let endTime: Date
-}
-
 final class FirestoreManager {
     static let shared = FirestoreManager()
     private let db = Firestore.firestore()
@@ -93,42 +83,42 @@ final class FirestoreManager {
                 completion(. success(events))
         }
     }
-//    func fetchstageevents(for school: School,
-//                          completion: @escaping (Result<[Event], Error>) -> Void) {
-//        let ref = db
-//            .collection("schools")
-//            .document(school.rawValue)
-//            .collection("events")
-//            .whereField("type", isEqualTo: "stage")
-//
-//        ref.getDocuments { snapshot, error in
-//            if let error = error {
-//                completion(.failure(error)); return
-//            }
-//            let docs = snapshot?.documents ?? []
-//            let events = docs.compactMap { doc -> Event? in
-//                let data = doc.data()
-//                guard
-//                    let name = data["name"] as? String,
-//                    let location = data["location"] as? String,
-//                    let congestion = data["congestion"] as? Int,
-//                    let type = data["type"] as? String,
-//                    let startTime = data["start_time"] as? Date,
-//                    let endTime = data["end_time"] as? Date
-//                else { return nil }
-//                return Event(
-//                    id: doc.documentID,
-//                    name: name,
-//                    location: location,
-//                    congestion: congestion,
-//                    type: type,
-//                    startTime: startTime,
-//                    endTime: endTime
-//                )
-//            }
-//            completion(. success(events))
-//    }
-//}
+    func fetchstageevents(for school: School,
+                          completion: @escaping (Result<[Event], Error>) -> Void) {
+        let ref = db
+            .collection("schools")
+            .document(school.rawValue)
+            .collection("events")
+            .whereField("type", isEqualTo: "stage")
+
+        ref.getDocuments { snapshot, error in
+            if let error = error {
+                completion(.failure(error)); return
+            }
+            let docs = snapshot?.documents ?? []
+            let events = docs.compactMap { doc -> Event? in
+                let data = doc.data()
+                guard
+                    let name = data["name"] as? String,
+                    let location = data["location"] as? String,
+                    let congestion = data["congestion"] as? Int,
+                    let type = data["type"] as? String,
+                    let startTime = data["start_time"] as? Date,
+                    let endTime = data["end_time"] as? Date
+                else { return nil }
+                return Event(
+                    id: doc.documentID,
+                    name: name,
+                    location: location,
+                    congestion: congestion,
+                    type: type,
+                    startTime: startTime,
+                    endTime: endTime
+                )
+            }
+            completion(. success(events))
+    }
+}
 }
             //class FirestoreManager {
             //    static let shared = FirestoreManager()

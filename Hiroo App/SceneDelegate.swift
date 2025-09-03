@@ -17,25 +17,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
 
-        let rootVC: UIViewController
-        let forceShowStartingPage = true // ← change to false when you're done testing
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let rootVC = sb.instantiateViewController(
+            withIdentifier: "SelectSchoolViewController"
+        ) as! SelectSchoolViewController
 
-        if forceShowStartingPage {
-            rootVC = StartingPageViewController()
-        } else if !UserDefaults.standard.bool(forKey: "hasLaunchedBefore") {
-            // First-time launch → show StartingPageViewController
-            UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
-            rootVC = StartingPageViewController()
-        } else if let user = Auth.auth().currentUser, user.isEmailVerified {
-            // Already signed in & verified → go to MainPage
-            rootVC = SelectSchoolViewController()
-        } else {
-            // Not signed in → show Signin screen
-            rootVC = SigninViewController_2()
-        }
-
-        let navController = UINavigationController(rootViewController: rootVC)
-        window?.rootViewController = navController
+        let nav = UINavigationController(rootViewController: rootVC)
+        window?.rootViewController = nav
         window?.makeKeyAndVisible()
     }
 

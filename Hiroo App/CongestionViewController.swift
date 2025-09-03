@@ -5,12 +5,13 @@
 //  Created by 井上　希稟 on 2025/07/23.
 //
 
+// 混雑状況を表示するViewController
 import UIKit
 import SideMenu
 
 class CongestionViewController: UIViewController {
-        @IBOutlet private weak var tableView: UITableView!
-        @IBOutlet private weak var titleLabel: UILabel!
+        let tableView = UITableView()
+        let titleLabel = UILabel()
         
         private var booths: [Event] = []
         
@@ -20,6 +21,8 @@ class CongestionViewController: UIViewController {
         }
         override func viewDidLoad() {
             super.viewDidLoad()
+            view.addSubview(titleLabel)
+                    view.addSubview(tableView)
             configureTableView()
             loadBooths()
             navigationItem.leftBarButtonItem = UIBarButtonItem(

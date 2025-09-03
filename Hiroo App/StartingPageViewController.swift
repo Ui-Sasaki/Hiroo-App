@@ -56,6 +56,7 @@ class StartingPageViewController: UIViewController {
         return label
     }()
 
+    private let guestButton = StartingPageViewController.makeGreenButton(title: "ゲストの方はこちら")
     private let newUserButton = StartingPageViewController.makeGreenButton(title: "はじめての方はこちら")
     private let loginButton = StartingPageViewController.makeGreenButton(title: "ログインする方はこちら")
 
@@ -94,7 +95,7 @@ class StartingPageViewController: UIViewController {
         logoStack.addArrangedSubview(crossLabel)
         logoStack.addArrangedSubview(hirooKoishikawaImage)
 
-        [titleLabel, logoStack, welcomeLabel, newUserButton, loginButton, partyButton].forEach {
+        [titleLabel, logoStack, welcomeLabel, guestButton, newUserButton, loginButton, partyButton].forEach {
             view.addSubview($0)
         }
 
@@ -237,9 +238,15 @@ class StartingPageViewController: UIViewController {
     }
 
     private func setupActions() {
+        guestButton.addTarget(self, action: #selector(didTapGuestMode), for: .touchUpInside)
         newUserButton.addTarget(self, action: #selector(didTapSignUp), for: .touchUpInside)
         loginButton.addTarget(self, action: #selector(didTapSignIn), for: .touchUpInside)
         partyButton.addTarget(self, action: #selector(didTapParty), for: .touchUpInside)
+    }
+    
+    @objc private func didTapGuestMode() {
+        let vc = SignUpViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func didTapSignUp() {
@@ -248,7 +255,7 @@ class StartingPageViewController: UIViewController {
     }
 
     @objc private func didTapSignIn() {
-        let vc = SigninViewController_2()
+        let vc = SigninViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
 
