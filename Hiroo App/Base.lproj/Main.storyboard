@@ -368,26 +368,6 @@
                     <view key="view" contentMode="scaleToFill" id="JD7-Kt-5Zs">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mui-ba-UMy">
-                                <rect key="frame" x="129" y="446" width="136" height="41"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="広尾学園小石川"/>
-                                <connections>
-                                    <action selector="selectKoishikawa" destination="JLc-W5-IxE" eventType="touchUpInside" id="SRp-x9-Mxu"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vR5-5h-xQa">
-                                <rect key="frame" x="152" y="379" width="88" height="41"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="広尾学園"/>
-                                <connections>
-                                    <action selector="selectHiroo" destination="JLc-W5-IxE" eventType="touchUpInside" id="Dva-7w-F9a"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="uM9-EX-6Na"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
