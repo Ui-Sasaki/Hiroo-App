@@ -165,7 +165,7 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
     
     // Firestore → 全件取得 → ローカルで絞り込み＆並べ替え
     private func loadEvents() {
-        let school = UserDefaults.standard.selectedSchool
+        let school = UserDefaults.standard.selectedSchool ?? .hiroo
         
         // ステージイベントだけにしたいなら fetchstageevents、
         // すべて対象なら fetchevents を使う

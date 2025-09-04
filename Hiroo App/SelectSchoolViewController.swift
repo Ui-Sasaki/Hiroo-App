@@ -19,29 +19,18 @@ class SelectSchoolViewController: UIViewController {
     
     @objc func selectHiroo() {
         UserDefaults.standard.selectedSchool = .hiroo
-        toMainTabBar()
+            switchToHome()
     }
     @objc func selectKoishikawa() {
         UserDefaults.standard.selectedSchool = .koishikawa
-        toMainTabBar()
-    }
-    @objc func toMainTabBar() {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
-        guard let tabBar = sb.instantiateViewController(
-            withIdentifier: "MainTabBarController"
-        ) as? MainTabBarViewController else {
-            return
-        }
-        DispatchQueue.main.async {
-            if let windowScene = self.view.window?.windowScene,
-               let sceneDelegate = windowScene.delegate as? SceneDelegate,
-               let window = sceneDelegate.window {
-                window.rootViewController = tabBar
-                window.makeKeyAndVisible()
-            }
-        }
+            switchToHome()
     }
     
+    private func switchToHome() {
+        if let scene = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            scene.setRootToHome(animated: true)
+        }
+    }
     
     private let headerImage: UIImageView = {
         let imageView = UIImageView()

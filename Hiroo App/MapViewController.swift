@@ -124,12 +124,12 @@ final class MapViewController: UIViewController, CLLocationManagerDelegate, MKMa
             view.addSubview(mapView)
 
             setupConstraints()
-            applyConfig(for: UserDefaults.standard.selectedSchool)
+        applyConfig(for: UserDefaults.standard.selectedSchool ?? .hiroo)
         }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        applyConfig(for: UserDefaults.standard.selectedSchool)
+        applyConfig(for: UserDefaults.standard.selectedSchool ?? .hiroo)
     }
     
     
