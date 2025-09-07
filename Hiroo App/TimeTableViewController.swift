@@ -171,7 +171,7 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
         
         // ステージイベントだけにしたいなら fetchstageevents、
         // すべて対象なら fetchevents を使う
-        FirestoreManager.shared.fetchevents(for: school) { [weak self] result in
+        FirestoreManager.shared.fetchstageevents(for: school) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let list):
