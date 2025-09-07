@@ -16,17 +16,21 @@ class HomeViewController: UIViewController {
     private var autoScrollTimer: Timer?
     private var currentImages: [String] = []
     
-    override func viewDidLoad() {
+  override func viewDidLoad() {
         super.viewDidLoad()
         setupImageCarouselBase()
         setupButtons()
         startAutoScroll()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "line.horizontal.3"),
-            style: .plain,
-            target: self,
-            action: #selector(openMenu)
-        )
+        let menuButton = UIBarButtonItem(
+                    image: UIImage(systemName: "line.horizontal.3"),
+                    style: .plain,
+                    target: self,
+                    action: #selector(openMenu)
+                )
+                // ここで色指定
+        menuButton.tintColor = .systemGreen   // ← 好きな色に
+                navigationItem.leftBarButtonItem = menuButton
+
         updateUIForSelectedSchool()
     }
     
