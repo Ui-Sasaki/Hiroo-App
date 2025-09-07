@@ -149,9 +149,11 @@ class HomeViewController: UIViewController {
         grid.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            grid.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 80),
-            grid.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
+                    grid.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 3), // ← 80 → 16 に変更
+                    grid.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),   // 追加
+                    grid.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20) // 追加
+                ])
+
     }
     
     private func makeFestivalButton(title: String, systemImage: String, action: Selector, color: UIColor) -> UIButton {
@@ -171,7 +173,7 @@ class HomeViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         
         // Square shape
-        button.widthAnchor.constraint(equalToConstant: 140).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 110).isActive = true
         button.heightAnchor.constraint(equalTo: button.widthAnchor).isActive = true
         
         // Shadow for "festival poster" feel
