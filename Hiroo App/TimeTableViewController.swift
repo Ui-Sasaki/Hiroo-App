@@ -1,13 +1,14 @@
+//
+//  TimeTableViewController.swift
+//  Hiroo App
+//
+//  Created by 井上　希稟 on 2025/07/23.
+//
+
 import UIKit
 import UserNotifications
 
-struct Event {
-    let id: String
-    let title: String
-    let startDate: Date
-    var isFavorite: Bool = false
-}
-
+// MARK: - TimeTableViewController
 class TimeTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     let segmentedControl = UISegmentedControl(items: ["アリーナ", "サブアリーナ", "ステージ"])
@@ -16,11 +17,44 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
     var redLineTimer: Timer?
 
     var events: [Event] = []
+    private var allEvents: [Event] = []
+
+    private let favoriteKey = "favoriteEventIDs"
+    private var favoriteIDs: Set<String> {
+        get {
+            let arr = UserDefaults.standard.array(forKey: favoriteKey) as? [String] ?? []
+            return Set(arr)
+        }
+        set {
+            UserDefaults.standard.set(Array(newValue), forKey: favoriteKey)
+        }
+    }
+    private func isFavorite(_ id: String) -> Bool { favoriteIDs.contains(id) }
+    private func setFavorite(_ on: Bool, for id: String) {
+        if on { favoriteIDs.insert(id) } else { favoriteIDs.remove(id) }
+    }
+    private func toggleFavorite(_ id: String) -> Bool {
+        if favoriteIDs.contains(id) {
+            favoriteIDs.remove(id)
+            return false
+        } else {
+            favoriteIDs.insert(id)
+            return true
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 239/255, green: 252/255, blue: 239/255, alpha: 1)
-        title = "広尾学園"
+        view.backgroundColor = .white
+        title = "Timetable"
+
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, error in
+            if let error = error { print("Notification permission error:", error) }
+        }
+
+        setupSegmentedControl()
+        setupTableView()
+        setupRedLine()
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "star"),
@@ -29,22 +63,18 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
             action: #selector(openFavorites)
         )
 
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("Notification permission error: \(error)")
-            }
-        }
-
-        setupSegmentedControl()
-        setupTableView()
-        setupRedLine()
-        loadDummyEvents()
+        loadEvents()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startRedLineTimer()
         scrollToRedLine()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        redLineTimer?.invalidate()
     }
 
     func setupSegmentedControl() {
@@ -83,10 +113,11 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.addSubview(redLineView)
     }
 
+
     func startRedLineTimer() {
         redLineTimer?.invalidate()
-        redLineTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-            self.updateRedLinePosition()
+        redLineTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            self?.updateRedLinePosition()
         }
         updateRedLinePosition()
     }
@@ -104,10 +135,11 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
         let totalMinutes = CGFloat((hour - startHour) * 60 + minute)
         let offset = (totalMinutes / CGFloat(blockDurationMinutes)) * rowHeight
 
+        let x: CGFloat = 60
         redLineView.frame = CGRect(
-            x: 60,
-            y: offset,
-            width: tableView.frame.width - 60,
+            x: x,
+            y: max(0, offset),
+            width: tableView.frame.width - x,
             height: 2
         )
     }
@@ -129,105 +161,117 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
 
-    func loadDummyEvents() {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd HH:mm"
-
-        let startTime = formatter.date(from: "2025/07/10 09:00")!
-        var generatedEvents: [Event] = []
-
-        for i in 0..<30 {
-            let eventTime = Calendar.current.date(byAdding: .minute, value: i * 30, to: startTime)!
-            let title = (i % 2 == 0) ? "オープニング" : "ライブ"
-            generatedEvents.append(Event(id: "\(i)", title: title, startDate: eventTime))
-        }
-
-        events = generatedEvents
-        tableView.reloadData()
-    }
-
-    @objc func tabChanged() {
-        print("Switched to tab \(segmentedControl.selectedSegmentIndex)")
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return events.count
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let event = events[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "EventCell", for: indexPath) as! EventCell
-        cell.configure(with: event)
-        cell.onStarTapped = { [weak self] in
-            self?.handleStarTapped(for: event)
-        }
-        return cell
-    }
-
-    func handleStarTapped(for event: Event) {
-        if event.isFavorite {
-            let alert = UIAlertController(title: "お気に入りを解除しますか？", message: "通知も取り消されます", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel))
-            alert.addAction(UIAlertAction(title: "解除", style: .destructive, handler: { _ in
-                if let index = self.events.firstIndex(where: { $0.id == event.id }) {
-                    self.events[index].isFavorite = false
-                    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [event.id])
-                    self.tableView.reloadData()
+    private func loadEvents() {
+        let school = UserDefaults.standard.selectedSchool ?? .hiroo
+        FirestoreManager.shared.fetchevents(for: school) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let list):
+                self.allEvents = list
+                DispatchQueue.main.async {
+                    self.updateFilterAndReload()
+                    self.startRedLineTimer()
+                    self.scrollToRedLine()
                 }
-            }))
-            present(alert, animated: true)
+            case .failure(let error):
+                print("fetch error:", error)
+            }
+        }
+    }
+
+    private func updateFilterAndReload() {
+        let selected = segmentedControl.selectedSegmentIndex
+        let key: String? = {
+            switch selected {
+            case 0: return "アリーナ"
+            case 1: return "サブアリーナ"
+            case 2: return "ステージ"
+            default: return nil
+            }
+        }()
+
+        var filtered = allEvents
+        if let key = key {
+            filtered = filtered.filter { $0.location == key }
+        }
+        filtered.sort { $0.startTime < $1.startTime }
+
+        self.events = filtered
+        self.tableView.reloadData()
+
+        if events.isEmpty {
+            let label = UILabel()
+            label.text = "イベントがありません"
+            label.textAlignment = .center
+            tableView.backgroundView = label
         } else {
-            let alert = UIAlertController(title: "お気に入りに登録しますか？", message: "イベントの10分前に通知します", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel))
-            alert.addAction(UIAlertAction(title: "登録", style: .default, handler: { _ in
-                if let index = self.events.firstIndex(where: { $0.id == event.id }) {
-                    self.events[index].isFavorite = true
-                    self.scheduleNotification(for: self.events[index])
-                    self.tableView.reloadData()
-                }
-            }))
-            present(alert, animated: true)
+            tableView.backgroundView = nil
         }
     }
 
     func scheduleNotification(for event: Event) {
         let content = UNMutableNotificationContent()
         content.title = "イベントのお知らせ"
-        content.body = "\(event.title) がもうすぐ始まります！"
+        content.body = "\(event.name) がもうすぐ始まります！"
         content.sound = .default
 
-        let triggerDate = event.startDate.addingTimeInterval(-600)
+        let triggerDate = event.startTime.addingTimeInterval(-600) // 10分前
         let triggerTime = max(triggerDate.timeIntervalSinceNow, 1)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: triggerTime, repeats: false)
 
         let request = UNNotificationRequest(identifier: event.id, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("Failed to schedule: \(error)")
+                print("Failed to schedule:", error)
             }
         }
     }
 
-    // MARK: - Open Favorites
+    @objc func tabChanged() {
+        updateFilterAndReload()
+        scrollToRedLine()
+    }
+
     @objc func openFavorites() {
-        let favoritesVC = FavoritesViewController()
-        favoritesVC.favoriteEvents = events.filter { $0.isFavorite }
-        favoritesVC.onUnstar = { [weak self] event in
-            if let index = self?.events.firstIndex(where: { $0.id == event.id }) {
-                self?.events[index].isFavorite = false
-                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [event.id])
-                self?.tableView.reloadData()
+        let favs = allEvents
+            .filter { isFavorite($0.id) }
+            .sorted { $0.startTime < $1.startTime }
+        let vc = FavoritesViewController()
+        vc.favoriteEvents = favs
+        vc.onUnstar = { [weak self] event in
+            guard let self = self else { return }
+            self.setFavorite(false, for: event.id)
+            self.updateFilterAndReload()
+        }
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { events.count }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { 60 }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let event = events[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "EventCell", for: indexPath) as! EventCell
+        cell.configure(with: event, isFavorite: isFavorite(event.id))
+        cell.onStarTapped = { [weak self, weak cell] in
+            guard let self = self else { return }
+            let nowFav = self.toggleFavorite(event.id)
+            cell?.updateStar(isFavorite: nowFav)
+
+            if nowFav {
+                self.scheduleNotification(for: event)
+            } else {
+                UNUserNotificationCenter.current()
+                    .removePendingNotificationRequests(withIdentifiers: [event.id])
             }
         }
-        navigationController?.pushViewController(favoritesVC, animated: true)
+        return cell
     }
 }
 
-// MARK: - Custom Cell
+
+// MARK: - EventCell
 class EventCell: UITableViewCell {
 
     let timeLabel = UILabel()
@@ -288,11 +332,14 @@ class EventCell: UITableViewCell {
         ])
     }
 
-    func configure(with event: Event) {
-        titleLabel.text = event.title
-        timeLabel.text = event.startDate.formatted(date: .omitted, time: .shortened)
+    func configure(with event: Event, isFavorite: Bool) {
+        titleLabel.text = event.name
+        timeLabel.text = event.startTime.formatted(date: .omitted, time: .shortened)
+        updateStar(isFavorite: isFavorite)
+    }
 
-        if event.isFavorite {
+    func updateStar(isFavorite: Bool) {
+        if isFavorite {
             starButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
             starButton.tintColor = .systemYellow
         } else {
@@ -310,7 +357,8 @@ class EventCell: UITableViewCell {
     }
 }
 
-// MARK: - Favorites Screen
+
+// MARK: - FavoritesViewController
 class FavoritesViewController: UITableViewController {
 
     var favoriteEvents: [Event] = []
@@ -320,14 +368,6 @@ class FavoritesViewController: UITableViewController {
         super.viewDidLoad()
         title = "お気に入り"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-
-        // 🔙 Custom back button (always go back to TimeTable)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "時間割",
-            style: .plain,
-            target: self,
-            action: #selector(backToTimetable)
-        )
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -337,8 +377,8 @@ class FavoritesViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let event = favoriteEvents[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let timeText = event.startDate.formatted(date: .omitted, time: .shortened)
-        cell.textLabel?.text = "\(timeText) - \(event.title)"
+        let timeText = event.startTime.formatted(date: .omitted, time: .shortened)
+        cell.textLabel?.text = "\(timeText) - \(event.name)"
         cell.accessoryType = .checkmark
         return cell
     }
@@ -354,13 +394,5 @@ class FavoritesViewController: UITableViewController {
             self.onUnstar?(event)
         }))
         present(alert, animated: true)
-    }
-
-    @objc private func backToTimetable() {
-        if let timetableVC = navigationController?.viewControllers.first(where: { $0 is TimeTableViewController }) {
-            navigationController?.popToViewController(timetableVC, animated: true)
-        } else {
-            navigationController?.popViewController(animated: true)
-        }
     }
 }
