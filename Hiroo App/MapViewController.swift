@@ -142,13 +142,17 @@ final class MapViewController: UIViewController, CLLocationManagerDelegate, MKMa
         metroLabel.text = cfg.metroText
         busLabel.text   = cfg.busText
         
-        // URL ラベル（“乗車案内” 部分だけリンク風に）
+       // URL ラベル（“乗車案内” 部分だけリンク風に）
         let baseText = "これは設定アプリへのリンクを含む文章です。\n\n乗車案内はこちらのリンクです"
         let attributed = NSMutableAttributedString(string: baseText)
         if let range = baseText.range(of: "乗車案内") {
-            let nsRange = NSRange(range, in: baseText)
-            attributed.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: nsRange)
-            attributed.addAttribute(.foregroundColor, value: UIColor.link, range: nsRange)
+                let nsRange = NSRange(range, in: baseText)
+                attributed.addAttribute(.underlineStyle,
+                                        value: NSUnderlineStyle.single.rawValue,
+                                        range: nsRange)
+                attributed.addAttribute(.foregroundColor,
+                                        value: UIColor.systemGreen,
+                                        range: nsRange)
         }
         urlLabel.attributedText = attributed
         
