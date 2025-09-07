@@ -23,12 +23,12 @@ class CongestionViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
+        title = "Congestion"
         titleLabel.font = .preferredFont(forTextStyle: .title2)
         titleLabel.numberOfLines = 0
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .red
         
         view.addSubview(titleLabel)
         view.addSubview(tableView)
@@ -50,7 +50,7 @@ class CongestionViewController: UIViewController {
     private func configureTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UINib(nibName: "CongestionTableViewCell", bundle: nil), forCellReuseIdentifier: "CongestionCell")
+        tableView.register(CongestionTableViewCell.self, forCellReuseIdentifier: "CongestionCell")
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
     }
@@ -88,11 +88,7 @@ extension CongestionViewController: UITableViewDataSource {
             for: indexPath
         ) as! CongestionTableViewCell
         let event = booths[indexPath.row]
-        cell.titleLabel.text = event.name
-        cell.locationLabel.text = "場所: \(event.location)"
-        
-        let maxIcons = 3
-        cell.updateIcons(occupied: event.congestion, max: maxIcons)
+        cell.configure(event: event)
         return cell
     }
 }
