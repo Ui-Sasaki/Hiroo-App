@@ -1,39 +1,22 @@
-//
-//  HirooGakuenViewController.swift
-//  Hiroo App
-//
-//  Created by ard on 2025/06/05.
-//
-
 import UIKit
 
 class HirooGakuenViewController: UIViewController {
     
     // UI Elements
     private let scrollView = UIScrollView()
-    private let stackView = UIStackView()
     private let pageControl = UIPageControl()
-    private let buttonGrid = UIStackView()
-    
-    private let images = ["1.JPG", "1.1.png"] // your images
-    private var timer: Timer? // slideshow timer
+    private var autoScrollTimer: Timer?   // ⬅️ Added
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(red: 239/255, green: 252/255, blue: 239/255, alpha: 1)
         title = "広尾学園"
         
         setupImageCarousel()
         setupButtons()
-        startAutoSlide() // 🔥 start slideshow
+        startAutoScroll() // ⬅️ Start auto switching
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        timer?.invalidate() // stop when leaving screen
-    }
-    
-    // MARK: - Image Carousel
     private func setupImageCarousel() {
         scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
@@ -43,33 +26,30 @@ class HirooGakuenViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            scrollView.heightAnchor.constraint(equalToConstant: 280)
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            scrollView.heightAnchor.constraint(equalToConstant: 280) // bigger image
         ])
         
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        scrollView.addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
-        ])
-        
-        for name in images {
+        let images = ["1.JPG", "2.JPG"]
+        for (index, name) in images.enumerated() {
             let imageView = UIImageView(image: UIImage(named: name))
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
-            imageView.layer.cornerRadius = 24
-            stackView.addArrangedSubview(imageView)
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            imageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+            imageView.layer.cornerRadius = 20
+            imageView.frame = CGRect(
+                x: CGFloat(index) * (view.frame.width - 40),
+                y: 0,
+                width: view.frame.width - 40,
+                height: 280
+            )
+            scrollView.addSubview(imageView)
         }
+        
+        scrollView.contentSize = CGSize(
+            width: (view.frame.width - 40) * CGFloat(images.count),
+            height: 280
+        )
         
         pageControl.numberOfPages = images.count
         pageControl.currentPage = 0
@@ -79,76 +59,115 @@ class HirooGakuenViewController: UIViewController {
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            pageControl.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 12),
+            pageControl.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 10),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
-    // MARK: - Auto Slide
-    private func startAutoSlide() {
-        timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
+    // MARK: - Auto Scroll
+    private func startAutoScroll() {
+        autoScrollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            let nextPage = (self.pageControl.currentPage + 1) % self.images.count
-            let offsetX = CGFloat(nextPage) * self.scrollView.frame.width
-            self.scrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
-            self.pageControl.currentPage = nextPage
+            
+            let pageWidth = self.scrollView.frame.width
+            let maxWidth = pageWidth * CGFloat(self.pageControl.numberOfPages)
+            let contentOffset = self.scrollView.contentOffset.x
+            
+            var nextOffset = contentOffset + pageWidth
+            if nextOffset >= maxWidth { // loop back
+                nextOffset = 0
+            }
+            
+            self.scrollView.setContentOffset(CGPoint(x: nextOffset, y: 0), animated: true)
         }
     }
     
-    // MARK: - Buttons
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        autoScrollTimer?.invalidate() // stop timer when leaving
+    }
+    
+    // MARK: - Festival Buttons
     private func setupButtons() {
-        let missingButton = makeGameButton(title: "Missing", color: .systemPink, action: #selector(openMissing))
-        let mapButton = makeGameButton(title: "Map", color: .systemBlue, action: #selector(openMap))
-        let congestionButton = makeGameButton(title: "Congestion", color: .systemOrange, action: #selector(openCongestion))
-        let timetableButton = makeGameButton(title: "TimeTable", color: .systemGreen, action: #selector(openTimetable))
+        let missingButton = makeFestivalButton(title: "Missing", systemImage: "person.fill.questionmark", action: #selector(openMissing), color: .systemPink)
+        let mapButton = makeFestivalButton(title: "Map", systemImage: "map.fill", action: #selector(openMap), color: .systemBlue)
+        let congestionButton = makeFestivalButton(title: "Congestion", systemImage: "car.fill", action: #selector(openCongestion), color: .systemOrange)
+        let timetableButton = makeFestivalButton(title: "TimeTable", systemImage: "calendar", action: #selector(openTimetable), color: .systemGreen)
         
-        let topRow = UIStackView(arrangedSubviews: [missingButton, mapButton])
-        topRow.axis = .horizontal
-        topRow.alignment = .fill
-        topRow.distribution = .fillEqually
-        topRow.spacing = 24
+        // Grid layout (2x2)
+        let grid = UIStackView(arrangedSubviews: [
+            UIStackView(arrangedSubviews: [missingButton, mapButton]),
+            UIStackView(arrangedSubviews: [congestionButton, timetableButton])
+        ])
+        grid.axis = .vertical
+        grid.spacing = 20
         
-        let bottomRow = UIStackView(arrangedSubviews: [congestionButton, timetableButton])
-        bottomRow.axis = .horizontal
-        bottomRow.alignment = .fill
-        bottomRow.distribution = .fillEqually
-        bottomRow.spacing = 24
+        for row in grid.arrangedSubviews as! [UIStackView] {
+            row.axis = .horizontal
+            row.spacing = 20
+            row.distribution = .fillEqually
+        }
         
-        buttonGrid.axis = .vertical
-        buttonGrid.alignment = .fill
-        buttonGrid.spacing = 28
-        buttonGrid.addArrangedSubview(topRow)
-        buttonGrid.addArrangedSubview(bottomRow)
-        
-        view.addSubview(buttonGrid)
-        buttonGrid.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(grid)
+        grid.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            buttonGrid.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 80),
-            buttonGrid.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            buttonGrid.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
+            grid.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 80),
+            grid.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
-    private func makeGameButton(title: String, color: UIColor, action: Selector) -> UIButton {
+    private func makeFestivalButton(title: String, systemImage: String, action: Selector, color: UIColor) -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 22, weight: .heavy)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = color
-        button.layer.cornerRadius = 24
+        
+        // Icon + Title stacked vertically
+        var config = UIButton.Configuration.filled()
+        config.title = title
+        config.image = UIImage(systemName: systemImage)
+        config.imagePlacement = .top
+        config.imagePadding = 8
+        config.baseForegroundColor = .white
+        config.baseBackgroundColor = color
+        config.cornerStyle = .large
+        
+        button.configuration = config
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        
+        // Square shape
+        button.widthAnchor.constraint(equalToConstant: 140).isActive = true
+        button.heightAnchor.constraint(equalTo: button.widthAnchor).isActive = true
+        
+        // Shadow for "festival poster" feel
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-        button.layer.shadowRadius = 8
-        button.heightAnchor.constraint(equalToConstant: 120).isActive = true
-        button.addTarget(self, action: action, for: .touchUpInside)
+        button.layer.shadowOpacity = 0.25
+        button.layer.shadowOffset = CGSize(width: 0, height: 4)
+        button.layer.shadowRadius = 6
+        
+        // Bounce animation
+        button.addAction(UIAction { _ in
+            UIView.animate(withDuration: 0.1,
+                           animations: {
+                button.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            }, completion: { _ in
+                UIView.animate(withDuration: 0.3,
+                               delay: 0,
+                               usingSpringWithDamping: 0.4,
+                               initialSpringVelocity: 6,
+                               options: .allowUserInteraction,
+                               animations: {
+                    button.transform = .identity
+                }, completion: nil)
+            })
+            
+            self.perform(action)
+        }, for: .touchUpInside)
+        
         return button
     }
     
     // MARK: - Navigation Actions
     @objc private func openMissing() {
-        navigationController?.pushViewController(MissingViewController(), animated: true)
+        navigationController?.pushViewController(MissingPersonViewController(), animated: true)
     }
     
     @objc private func openMap() {
@@ -156,7 +175,6 @@ class HirooGakuenViewController: UIViewController {
     }
     
     @objc private func openCongestion() {
-        navigationController?.pushViewController(CongestionViewController(), animated: true)
     }
     
     @objc private func openTimetable() {
@@ -167,10 +185,8 @@ class HirooGakuenViewController: UIViewController {
 // MARK: - UIScrollViewDelegate
 extension HirooGakuenViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let pageWidth = scrollView.frame.width
-        guard pageWidth > 0 else { return }
-        let pageIndex = Int(round(scrollView.contentOffset.x / pageWidth))
-        pageControl.currentPage = max(0, min(pageIndex, pageControl.numberOfPages - 1))
+        let pageIndex = round(scrollView.contentOffset.x / (view.frame.width - 40))
+        pageControl.currentPage = Int(pageIndex)
     }
 }
 
@@ -181,29 +197,28 @@ class MissingViewController: UIViewController {
         view.backgroundColor = .systemPink
         title = "Missing"
     }
-}
-
-class MapViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBlue
-        title = "Map"
+    
+    class MapViewController: UIViewController {
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.backgroundColor = .systemBlue
+            title = "Map"
+        }
+        
+        class CongestionViewController: UIViewController {
+            override func viewDidLoad() {
+                super.viewDidLoad()
+                view.backgroundColor = .systemOrange
+                title = "Congestion"
+            }
+        }
+        
+        class TimeTableViewController: UIViewController {
+            override func viewDidLoad() {
+                super.viewDidLoad()
+                view.backgroundColor = .systemGreen
+                title = "TimeTable"
+            }
+        }
     }
 }
-
-class CongestionViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemOrange
-        title = "Congestion"
-    }
-}
-
-class TimeTableViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemGreen
-        title = "TimeTable"
-    }
-}
-
