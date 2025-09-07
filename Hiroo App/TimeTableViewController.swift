@@ -128,7 +128,7 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
         
-        let startTime = formatter.date(from: "2025/07/10 09:00")!
+        let startTime = formatter.date(from: "2025/09/07 09:00")!
         var generatedEvents: [Event] = []
         
         for i in 0..<30 {
@@ -143,6 +143,8 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
     
     @objc func tabChanged() {
         print("Switched to tab \(segmentedControl.selectedSegmentIndex)")
+        updateFilterAndReload()
+        scrollToRedLine()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -169,7 +171,7 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
         
         // ステージイベントだけにしたいなら fetchstageevents、
         // すべて対象なら fetchevents を使う
-        FirestoreManager.shared.fetchstageevents(for: school) { [weak self] result in
+        FirestoreManager.shared.fetchevents(for: school) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let list):
