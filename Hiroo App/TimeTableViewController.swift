@@ -19,8 +19,15 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(red: 239/255, green: 252/255, blue: 239/255, alpha: 1)
         title = "広尾学園"
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "star"),
+            style: .plain,
+            target: self,
+            action: #selector(openFavorites)
+        )
 
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
@@ -204,10 +211,23 @@ class TimeTableViewController: UIViewController, UITableViewDelegate, UITableVie
             }
         }
     }
+
+    // MARK: - Open Favorites
+    @objc func openFavorites() {
+        let favoritesVC = FavoritesViewController()
+        favoritesVC.favoriteEvents = events.filter { $0.isFavorite }
+        favoritesVC.onUnstar = { [weak self] event in
+            if let index = self?.events.firstIndex(where: { $0.id == event.id }) {
+                self?.events[index].isFavorite = false
+                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [event.id])
+                self?.tableView.reloadData()
+            }
+        }
+        navigationController?.pushViewController(favoritesVC, animated: true)
+    }
 }
 
 // MARK: - Custom Cell
-
 class EventCell: UITableViewCell {
 
     let timeLabel = UILabel()
@@ -281,12 +301,66 @@ class EventCell: UITableViewCell {
         }
     }
 
-
     @objc func starTapped() {
         onStarTapped?()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - Favorites Screen
+class FavoritesViewController: UITableViewController {
+
+    var favoriteEvents: [Event] = []
+    var onUnstar: ((Event) -> Void)?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "お気に入り"
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+
+        // 🔙 Custom back button (always go back to TimeTable)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "時間割",
+            style: .plain,
+            target: self,
+            action: #selector(backToTimetable)
+        )
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return favoriteEvents.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let event = favoriteEvents[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let timeText = event.startDate.formatted(date: .omitted, time: .shortened)
+        cell.textLabel?.text = "\(timeText) - \(event.title)"
+        cell.accessoryType = .checkmark
+        return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let event = favoriteEvents[indexPath.row]
+
+        let alert = UIAlertController(title: "お気に入りを解除しますか？", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel))
+        alert.addAction(UIAlertAction(title: "解除", style: .destructive, handler: { _ in
+            self.favoriteEvents.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.onUnstar?(event)
+        }))
+        present(alert, animated: true)
+    }
+
+    @objc private func backToTimetable() {
+        if let timetableVC = navigationController?.viewControllers.first(where: { $0 is TimeTableViewController }) {
+            navigationController?.popToViewController(timetableVC, animated: true)
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
     }
 }
